@@ -98,14 +98,8 @@ new_cols
 new_df = df[new_cols]
 [(F"NUM_{columns}").upper() for columns in df.columns if columns not in columns ]
 
-<<<<<<< HEAD
+
 new_df.head(5)
-=======
-
-
-
->>>>>>> origin/master
-
 
 import seaborn as sns
 df = sns.load_dataset("car_crashes")
