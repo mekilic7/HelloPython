@@ -13,18 +13,14 @@ def ickaplama():
 
 
 ickaplama()
-
-
-
-
 #//***********extras ** assert kullanımı****************
 
 
 
 def factorial(n: int):
     print("Hello")
-    assert type(n) == int ,"Oh no! This assertion failed!1"
-    assert n >= 0 ,"Oh no! This assertion failed!2"
+    assert type(n) == int , "Oh no! This assertion failed! 1"
+    assert n >= 0 , "Oh no! This assertion failed! 2"
 
 
     print("let's go")
