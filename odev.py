@@ -101,6 +101,14 @@ new_df = df[new_cols]
 
 new_df.head(5)
 
+
+
+
+
+
+
+
+
 import seaborn as sns
 df = sns.load_dataset("car_crashes")
 df.columns
