@@ -29,7 +29,7 @@ df.columns
 import seaborn as sns
 df = sns.load_dataset("car_crashes")
 df.columns
-df.columns = [(F"NUM_{columns}").upper() if df[F"{columns}"].dtype != "O" else F"{columns}".upper() for columns in df.columns ]
+df.columns = ["NUM_" + column.upper() if df[column].dtype != "O" else column.upper() for column in df.columns]
 df.columns
 
 
@@ -59,7 +59,7 @@ df.columns
 import seaborn as sns
 df = sns.load_dataset("car_crashes")
 df.columns
-[(F"{columns}_FLAG").upper()  if "no" not in columns else F"{columns}".upper() for columns in df.columns]
+[column.upper() +"_FLAG"  if "no" not in column else column.upper() for column in df.columns]
 
 
 ###############################################
@@ -90,15 +90,10 @@ df.columns
 ###############################################
 import seaborn as sns
 df = sns.load_dataset("car_crashes")
-
 og_list = ["abbrev", "no_previous"]
-new_cols =  [columns for columns in df.columns if columns not in og_list]
+new_cols =  [column for column in df.columns if column not in og_list]
 new_cols
-
 new_df = df[new_cols]
-[(F"NUM_{columns}").upper() for columns in df.columns if columns not in columns ]
-
-
 new_df.head(5)
 
 
