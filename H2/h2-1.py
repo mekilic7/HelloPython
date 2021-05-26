@@ -1,0 +1,1 @@
+Merhaba github yine ben pycharm linux vs vs
