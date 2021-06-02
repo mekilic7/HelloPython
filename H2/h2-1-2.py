@@ -347,10 +347,31 @@ df.index
 # Indexi Değişkene Çevirmek
 #######################
 
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+
+def load_titanic():
+    df = pd.read_csv("H2/datasets/titanic.csv")
+    return df
+
+def load_app_train():
+    df = pd.read_csv("H2/datasets/application_train.csv")
+    return df
+dff = load_app_train()
+df = load_titanic()
+
+
+df.index =df["Fare"]
+df["Pclass"] = df.index
+
 df.index
-df["PassengerId"] = df.index
-df.drop("PassengerId", axis=1, inplace=True)
+
+df.drop("Fare", axis=1, inplace=True)
+
 df.reset_index().head()
+
 df = df.reset_index()
 
 #######################
