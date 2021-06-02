@@ -129,3 +129,84 @@ check_df(agg_df)
 [agg_df["COUNTRY"] for col in agg_df.columns]
 
 
+////////////////////////////////////////////*****************************************//////////////////////////////////
+
+
+
+
+yeni 
+
+
+
+########GÖREV-5#############################
+############################################
+#age değişkenini kategorik değişkene çeviriniz ve agg_df’e ekleyiniz.
+
+
+agg_df['AGE_CAT'] = pd.cut(agg_df['AGE'], [0, 20, 25, 30, 40, 70],labels=['0_20','20_25','25_30','30_40','40_70'])
+
+
+check_df(agg_df)
+
+
+agg_df.values
+
+
+agg_df["customers_level_based"] = [row[1].upper() + "_"+ row[0].upper() +  "_"+  row[2].upper()+ "_"+row[5]  for row in agg_df.values] 
+
+
+
+
+[col["COUNTRY"].upper() + "_" + col["SOURCE"].upper() + "_" + col["SEX"].upper() + "_" + col["AGE_CAT"]
+       for col in agg_df.columns]
+
+[col for col in agg_df.columns]
+
+
+agg_df["SEGMENT"] = pd.qcut(agg_df["PRICE"],4,labels=["D","C","B","A"]) 
+
+
+
+agg_df.groupby("customers_level_based").agg({"PRICE" : "mean"})
+
+
+
+agg_df.groupby("SEGMENT").agg({"PRICE":["min","max","sum"]}).sort_values(by=["SEGMENT"],ascending=False)
+
+
+c_seg_df = agg_df[agg_df["SEGMENT"] == "C"]
+
+
+
+def check_df(dataframe, head=5):
+    print("##################### Shape #####################")
+    print(dataframe.shape)
+    print("##################### Types #####################")
+    print(dataframe.dtypes)
+    print("##################### Head #####################")
+    print(dataframe.head(head))
+    print("##################### Tail #####################")
+    print(dataframe.tail(head))
+    print("##################### NA #####################")
+    print(dataframe.isnull().sum())
+    print("##################### Quantiles #####################")
+    print(dataframe.quantile([0, 0.05, 0.50, 0.95, 0.99, 1]).T)
+
+
+
+check_df(c_seg_df)
+
+
+
+
+
+new_user = "TUR_ANDROID_FEMALE_30_40"
+
+agg_df[agg_df["customers_level_based"] == new_user]
+
+
+
+
+
+
+
