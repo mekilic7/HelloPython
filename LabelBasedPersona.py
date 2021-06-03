@@ -17,18 +17,11 @@ df = load_persona()
 ############################################
 
 
-
 ############################################
 #Soru 1: persona.csv dosyasını okutunuz ve veri seti ile ilgili genel bilgileri gösteriniz.
 def load_persona():
     df = pd.read_csv("H2/datasets/persona.csv")
     return df
-
-df22 = load_persona()
-
-check_df(df22)
-cat_summary(df22,"COUNTRY")
-
 df = load_persona()
 
 #from EDA_Kit
@@ -60,7 +53,6 @@ df[["COUNTRY"]].value_counts()
 
 ############################################
 #Soru 6: Ülkelere göre satışlardan toplam ne kadar kazanılmış?
-
 df.groupby("COUNTRY").agg({"PRICE":"sum"})
 
 ############################################
@@ -77,7 +69,6 @@ df.groupby("SOURCE").agg({"PRICE":"mean"})
 
 ###############################################
 #Soru 10: COUNTRY-SOURCE kırılımında PRICE ortalamaları nedir?
-
 df.pivot_table(index="COUNTRY",columns="SOURCE",values=["PRICE"], aggfunc="mean")
 #version 2
 df.groupby(["SOURCE","COUNTRY"]).agg({"PRICE":"mean"})
@@ -91,8 +82,6 @@ df.groupby(["SOURCE","COUNTRY"]).agg({"PRICE":"mean"})
 #COUNTRY, SOURCE, SEX, AGE kırılımında
 #toplam kazançlar nedir?
 df.groupby(["SOURCE","COUNTRY","SEX","AGE"]).agg({"PRICE":"sum"})
-
-
 
 
 
@@ -119,33 +108,18 @@ agg_df
 ########GÖREV-5#############################
 ############################################
 #age değişkenini kategorik değişkene çeviriniz ve agg_df’e ekleyiniz.
-
-
 agg_df['AGE_CAT'] = pd.cut(agg_df['AGE'], [0, 20, 25, 30, 40, 70],labels=['0_20','20_25','25_30','30_40','40_70'])
 
-
-check_df(agg_df)
-
-#agg_df["customers_level_based"] = agg_df["COUNTRY"].upper()
-
-
-
-#[col["COUNTRY"].upper() + "_" + col["SOURCE"].upper() + "_" + col["SEX"].upper() + "_" + col["AGE_CAT"]
-#      for col in agg_df.columns]
-
-#[agg_df["COUNTRY"] for col in agg_df.columns]
 
 
 ########GÖREV-5#############################
 ############################################
 #age değişkenini kategorik değişkene çeviriniz ve agg_df’e ekleyiniz.
-
 agg_df['AGE_CAT'] = pd.cut(agg_df['AGE'], [0, 20, 25, 30, 40, 70],labels=['0_20','20_25','25_30','30_40','40_70'])
 
 ########GÖREV-6#############################
 ############################################
 #Yeni seviye tabanlı müşterileri (persona) tanımlayınız.
-
 agg_df["customers_level_based"] = [row[0].upper() + "_"+ row[1].upper() +  "_"+  row[2].upper()+ "_"+row[5]  for row in agg_df.values]
 
 
@@ -154,12 +128,17 @@ agg_df["customers_level_based"] = [row[0].upper() + "_"+ row[1].upper() +  "_"+ 
 #Yeni müşterileri (personaları) segmentlere ayırınız.
 
 
-#NOT:agg_df te alınabilirdi ama kaynak kullanımı açısından bu şekilde daha verimli olacağını düşündüm :)
+#NOT:agg_df ile de devam edilebilirdi ama kaynak kullanımı açısından bu şekilde daha verimli olacağını düşündüm :)
 
 persona_df = agg_df.groupby("customers_level_based").agg({"PRICE" : "mean"})
 
 persona_df["SEGMENT"] = pd.qcut(persona_df["PRICE"],4,labels=["D","C","B","A"])
 
+#▪ Segmentleri betimleyiniz (Segmentlere göre group by yapıp price mean, max, sum’larını alınız).
+persona_df.groupby("SEGMENT").agg({"PRICE" : ["mean","max","sum"]}).sort_values(by=['SEGMENT'],ascending=False)
+
+
+#▪ C segmentini analiz ediniz (Veri setinden sadece C segmentini çekip analiz ediniz).
 c_seg_df = persona_df[persona_df["SEGMENT"] == "C"]
 
 check_df(c_seg_df)
@@ -184,59 +163,6 @@ persona_df[persona_df["customers_level_based"] == new_user_f]
 
 
 
-
-
-
-
-
-
-
-
-
-check_df(agg_df)
-
-
-agg_df.values
-
-
-agg_df["customers_level_based"] = [row[0].upper() + "_"+ row[1].upper() +  "_"+  row[2].upper()+ "_"+row[5]  for row in agg_df.values]
-
-
-[col for col in agg_df.columns]
-
-
-
-
-
-
-
-
-
-### agg_df te alınabilirdi ama kaynak kullanımı açısından bu şekilde daha verimli olacağını düşündüm :)
-
-persona_df["SEGMENT"] = pd.qcut(persona_df["PRICE"],4,labels=["D","C","B","A"])
-
-
-
-#agg_df.groupby("SEGMENT").agg({"PRICE":["min","max","sum"]}).sort_values(by=["SEGMENT"],ascending=False)
-
-
-
-
-c_seg_df = persona_df[persona_df["SEGMENT"] == "C"]
-
-check_df(c_seg_df)
-
-
-
-persona_df =  persona_df.reset_index()
-
-new_user_t = "TUR_ANDROID_FEMALE_30_40"
-
-persona_df[persona_df["customers_level_based"] == new_user_t]
-
-new_user_f= "FRA_ANDROID_FEMALE_30_40"
-persona_df[persona_df["customers_level_based"] == new_user_f]
 
 
 
