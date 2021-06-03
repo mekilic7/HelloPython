@@ -24,6 +24,11 @@ def load_persona():
     df = pd.read_csv("H2/datasets/persona.csv")
     return df
 
+df22 = load_persona()
+
+check_df(df22)
+cat_summary(df22,"COUNTRY")
+
 df = load_persona()
 
 #from EDA_Kit
@@ -96,7 +101,7 @@ df.groupby(["SOURCE","COUNTRY","SEX","AGE"]).agg({"PRICE":"sum"})
 ############################################
 #Çıktıyı PRICE’a göre sıralayınız.
 
-temp_df = df.groupby(["SOURCE","COUNTRY","SEX","AGE"]).agg({"PRICE":"sum"})
+temp_df = df.groupby(["COUNTRY","SOURCE","SEX","AGE"]).agg({"PRICE":"sum"})
 
 agg_df = temp_df.sort_values(by=['PRICE'],ascending=False)
 
@@ -121,29 +126,71 @@ agg_df['AGE_CAT'] = pd.cut(agg_df['AGE'], [0, 20, 25, 30, 40, 70],labels=['0_20'
 
 check_df(agg_df)
 
-
-
-[col["COUNTRY"].upper() + "_" + col["SOURCE"].upper() + "_" + col["SEX"].upper() + "_" + col["AGE_CAT"]
-       for col in agg_df.columns]
-
-[agg_df["COUNTRY"] for col in agg_df.columns]
-
-
-////////////////////////////////////////////*****************************************//////////////////////////////////
+#agg_df["customers_level_based"] = agg_df["COUNTRY"].upper()
 
 
 
+#[col["COUNTRY"].upper() + "_" + col["SOURCE"].upper() + "_" + col["SEX"].upper() + "_" + col["AGE_CAT"]
+#      for col in agg_df.columns]
 
-yeni 
-
+#[agg_df["COUNTRY"] for col in agg_df.columns]
 
 
 ########GÖREV-5#############################
 ############################################
 #age değişkenini kategorik değişkene çeviriniz ve agg_df’e ekleyiniz.
 
-
 agg_df['AGE_CAT'] = pd.cut(agg_df['AGE'], [0, 20, 25, 30, 40, 70],labels=['0_20','20_25','25_30','30_40','40_70'])
+
+########GÖREV-6#############################
+############################################
+#Yeni seviye tabanlı müşterileri (persona) tanımlayınız.
+
+agg_df["customers_level_based"] = [row[0].upper() + "_"+ row[1].upper() +  "_"+  row[2].upper()+ "_"+row[5]  for row in agg_df.values]
+
+
+########GÖREV-7#############################
+############################################
+#Yeni müşterileri (personaları) segmentlere ayırınız.
+
+
+#NOT:agg_df te alınabilirdi ama kaynak kullanımı açısından bu şekilde daha verimli olacağını düşündüm :)
+
+persona_df = agg_df.groupby("customers_level_based").agg({"PRICE" : "mean"})
+
+persona_df["SEGMENT"] = pd.qcut(persona_df["PRICE"],4,labels=["D","C","B","A"])
+
+c_seg_df = persona_df[persona_df["SEGMENT"] == "C"]
+
+check_df(c_seg_df)
+
+
+
+########GÖREV-7 (aslında 8)#############################
+############################################
+#Yeni gelen müşterileri segmentlerine göre sınıflandırınız ve ne kadar gelir getirebileceğini tahmin ediniz.
+
+
+persona_df =  persona_df.reset_index()
+
+new_user_t = "TUR_ANDROID_FEMALE_30_40"
+
+persona_df[persona_df["customers_level_based"] == new_user_t]
+
+new_user_f= "FRA_ANDROID_FEMALE_30_40"
+persona_df[persona_df["customers_level_based"] == new_user_f]
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 check_df(agg_df)
@@ -152,59 +199,44 @@ check_df(agg_df)
 agg_df.values
 
 
-agg_df["customers_level_based"] = [row[1].upper() + "_"+ row[0].upper() +  "_"+  row[2].upper()+ "_"+row[5]  for row in agg_df.values] 
+agg_df["customers_level_based"] = [row[0].upper() + "_"+ row[1].upper() +  "_"+  row[2].upper()+ "_"+row[5]  for row in agg_df.values]
 
-
-
-
-[col["COUNTRY"].upper() + "_" + col["SOURCE"].upper() + "_" + col["SEX"].upper() + "_" + col["AGE_CAT"]
-       for col in agg_df.columns]
 
 [col for col in agg_df.columns]
 
 
-agg_df["SEGMENT"] = pd.qcut(agg_df["PRICE"],4,labels=["D","C","B","A"]) 
 
 
 
-agg_df.groupby("customers_level_based").agg({"PRICE" : "mean"})
 
 
 
-agg_df.groupby("SEGMENT").agg({"PRICE":["min","max","sum"]}).sort_values(by=["SEGMENT"],ascending=False)
+
+### agg_df te alınabilirdi ama kaynak kullanımı açısından bu şekilde daha verimli olacağını düşündüm :)
+
+persona_df["SEGMENT"] = pd.qcut(persona_df["PRICE"],4,labels=["D","C","B","A"])
 
 
-c_seg_df = agg_df[agg_df["SEGMENT"] == "C"]
+
+#agg_df.groupby("SEGMENT").agg({"PRICE":["min","max","sum"]}).sort_values(by=["SEGMENT"],ascending=False)
 
 
 
-def check_df(dataframe, head=5):
-    print("##################### Shape #####################")
-    print(dataframe.shape)
-    print("##################### Types #####################")
-    print(dataframe.dtypes)
-    print("##################### Head #####################")
-    print(dataframe.head(head))
-    print("##################### Tail #####################")
-    print(dataframe.tail(head))
-    print("##################### NA #####################")
-    print(dataframe.isnull().sum())
-    print("##################### Quantiles #####################")
-    print(dataframe.quantile([0, 0.05, 0.50, 0.95, 0.99, 1]).T)
 
-
+c_seg_df = persona_df[persona_df["SEGMENT"] == "C"]
 
 check_df(c_seg_df)
 
 
 
+persona_df =  persona_df.reset_index()
 
+new_user_t = "TUR_ANDROID_FEMALE_30_40"
 
-new_user = "TUR_ANDROID_FEMALE_30_40"
+persona_df[persona_df["customers_level_based"] == new_user_t]
 
-agg_df[agg_df["customers_level_based"] == new_user]
-
-
+new_user_f= "FRA_ANDROID_FEMALE_30_40"
+persona_df[persona_df["customers_level_based"] == new_user_f]
 
 
 

@@ -1,4 +1,5 @@
 #Functions ****************************************
+import pandas
 from numpy.distutils.from_template import item_re
 
 a = 1
@@ -170,4 +171,4 @@ df[num_cols].head(5)
 
 df[num_cols].values
 
-{row[0]: [str(s) for s in row[1:]] for row in df[num_cols].values }
+df2 =  {row[0]: [str(s) for s in row[1:]] for row in df[num_cols].values }
