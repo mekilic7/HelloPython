@@ -6,7 +6,7 @@ from EDA_Kit import *
 
 
 def load_persona():
-    df = pd.read_csv("H2/datasets/persona.csv")
+    df = pd.read_csv("../H2/datasets/persona.csv")
     return df
 
 df = load_persona()
@@ -20,7 +20,7 @@ df = load_persona()
 ############################################
 #Soru 1: persona.csv dosyasını okutunuz ve veri seti ile ilgili genel bilgileri gösteriniz.
 def load_persona():
-    df = pd.read_csv("H2/datasets/persona.csv")
+    df = pd.read_csv("../H2/datasets/persona.csv")
     return df
 df = load_persona()
 

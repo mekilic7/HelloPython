@@ -7,7 +7,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 def load_titanic():
-    df = pd.read_csv("H2/datasets/titanic.csv")
+    df = pd.read_csv("../H2/datasets/titanic.csv")
     return df
 
 df = load_titanic()
