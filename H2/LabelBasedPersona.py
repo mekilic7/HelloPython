@@ -3,24 +3,19 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from EDA_Kit import *
 
-
-
 def load_persona():
-    df = pd.read_csv("../H2/datasets/persona.csv")
+    df = pd.read_csv("H2/datasets/persona.csv")
     return df
 
 df = load_persona()
-
-
 ############################################
 ########GÖREV-1#############################
 ############################################
 
-
 ############################################
 #Soru 1: persona.csv dosyasını okutunuz ve veri seti ile ilgili genel bilgileri gösteriniz.
 def load_persona():
-    df = pd.read_csv("../H2/datasets/persona.csv")
+    df = pd.read_csv("H2/datasets/persona.csv")
     return df
 df = load_persona()
 
@@ -28,7 +23,6 @@ df = load_persona()
 check_df(df)
 #from EDA_Kit
 num_summary(dataframe=df,numerical_col="AGE",plot=False)
-
 
 ############################################
 #Soru 2: Kaç unique SOURCE vardır? Frekansları nedir?
@@ -108,7 +102,8 @@ agg_df
 ########GÖREV-5#############################
 ############################################
 #age değişkenini kategorik değişkene çeviriniz ve agg_df’e ekleyiniz.
-agg_df['AGE_CAT'] = pd.cut(agg_df['AGE'], [0, 20, 25, 30, 40, 70],labels=['0_20','20_25','25_30','30_40','40_70'])
+max_age = agg_df['AGE'].max()
+agg_df['AGE_CAT'] = pd.cut(agg_df['AGE'], [0, 20, 25, 30, 40, max_age],labels=['0_20','20_25','25_30','30_40','40_70'])
 
 
 
@@ -150,13 +145,13 @@ check_df(c_seg_df)
 #Yeni gelen müşterileri segmentlerine göre sınıflandırınız ve ne kadar gelir getirebileceğini tahmin ediniz.
 
 
-persona_df =  persona_df.reset_index()
+persona_df = persona_df.reset_index()
 
 new_user_t = "TUR_ANDROID_FEMALE_30_40"
 
 persona_df[persona_df["customers_level_based"] == new_user_t]
 
-new_user_f= "FRA_ANDROID_FEMALE_30_40"
+new_user_f = "FRA_ANDROID_FEMALE_30_40"
 persona_df[persona_df["customers_level_based"] == new_user_f]
 
 
