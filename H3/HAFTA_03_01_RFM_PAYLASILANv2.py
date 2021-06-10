@@ -48,14 +48,19 @@ pd.set_option('display.max_rows', None)
 pd.set_option('display.float_format', lambda x: '%.2f' % x)
 
 # 2009-2010 yılı içerisindeki veriler
-df_ = pd.read_excel("H3/online_retail_II.xlsx", sheet_name="Year 2009-2010")
+_df_ = pd.read_excel("H3/online_retail_II.xlsx", sheet_name="Year 2009-2010")
 
 
-df = df_.copy()
-df.head()
-df.shape
+_df_.head()
 
-df["TotalPrice"] = df["Quantity"] * df["Price"]
+_df_.shape
+
+_df = _df_.copy()
+_df.head()
+_df.shape
+
+_df.describe().T
+_df["TotalPrice"] = _df["Quantity"] * _df["Price"]
 
 
 
@@ -64,32 +69,34 @@ df["TotalPrice"] = df["Quantity"] * df["Price"]
 # 3. Veri Hazırlama (Data Preparation)
 ###############################################################
 
-df.shape
-df.isnull().sum()
-df.dropna(inplace=True)
-df.shape
-df = df[~df["Invoice"].str.contains("C", na=False)] # iadeleri çıkar.
+_df.shape
+_df.isnull().sum()
+_df.dropna(inplace=True)
+_df.shape
+_df = _df[~_df["Invoice"].str.contains("C", na=False)] # iadeleri çıkar.
 
-df.shape
+_df.shape
 ###############################################################
 # 4. RFM Metriklerinin Hesaplanması (Calculating RFM Metrics)
 ###############################################################
 
-df["InvoiceDate"].max() # son alışveriş tarihinden bu yana geçe süre
+_df.head()
+
+_df["InvoiceDate"].max() # son alışveriş tarihinden bu yana geçe süre
 today_date = dt.datetime(2010, 12, 11) # GARANTİ OLSUN DİYE 2 GÜN SONRASINI AL -- gÜN FARKI 1 OLSUN DİYE
 
 # recency
 # frequency
 # monetary
 
-rfm = df.groupby('Customer ID').agg({'InvoiceDate': lambda InvoiceDate: (today_date - InvoiceDate.max()).days,
+_rfm = _df.groupby('Customer ID').agg({'InvoiceDate': lambda InvoiceDate: (today_date - InvoiceDate.max()).days,
                                      'Invoice': lambda Invoice: Invoice.nunique(),
                                      'TotalPrice': lambda TotalPrice: TotalPrice.sum()})
 
-rfm.head()
-rfm.columns = ['recency', 'frequency', 'monetary']
-rfm.describe().T
-rfm = rfm[rfm["monetary"] > 0]
+_rfm.head()
+_rfm.columns = ['recency', 'frequency', 'monetary']
+_rfm.describe().T
+_rfm = _rfm[_rfm["monetary"] > 0]
 
 
 ###############################################################
@@ -97,19 +104,19 @@ rfm = rfm[rfm["monetary"] > 0]
 ###############################################################
 
 # Recency ÖNCE RECENCY HESAPLANIR KÜÇÜK OLAN DAHA İYİ
-rfm["recency_score"] = pd.qcut(rfm['recency'], 5, labels=[5, 4, 3, 2, 1])
+_rfm["recency_score"] = pd.qcut(_rfm['recency'], 5, labels=[5, 4, 3, 2, 1])
 # 0,20,40,60,80,100
-rfm.head()
+_rfm.head()
 
 #QCUT degerleri küçükten büyüğe sıralayıp labellara göre sınıflar.
-rfm["frequency_score"] = pd.qcut(rfm['frequency'].rank(method="first"), 5, labels=[1, 2, 3, 4, 5])
+_rfm["frequency_score"] = pd.qcut(_rfm['frequency'].rank(method="first"), 5, labels=[1, 2, 3, 4, 5])
 # rank farklı çeyreklerde aynı değer deva ediyorsa çözmek için .... Bakılacak
 
-rfm["monetary_score"] = pd.qcut(rfm['monetary'], 5, labels=[1, 2, 3, 4, 5])
+_rfm["monetary_score"] = pd.qcut(_rfm['monetary'], 5, labels=[1, 2, 3, 4, 5])
 
 
-rfm["RFM_SCORE"] = (rfm['recency_score'].astype(str) +
-                    rfm['frequency_score'].astype(str))
+_rfm["RFM_SCORE"] = (_rfm['recency_score'].astype(str) +
+                    _rfm['frequency_score'].astype(str))
 
 
 
@@ -132,12 +139,14 @@ seg_map = {
 }
 
 
-rfm['segment'] = rfm['RFM_SCORE'].replace(seg_map, regex=True)
+_rfm['segment'] = _rfm['RFM_SCORE'].replace(seg_map, regex=True)
 
-rfm[["segment", "recency", "frequency", "monetary"]].groupby("segment").agg(["mean", "count"])
+_rfm[["segment", "recency", "frequency", "monetary"]].groupby("segment").agg(["mean", "count"])
 
 
-rfm[rfm["segment"] == "need_attention"].head()
+_rfm[_rfm["segment"] == "need_attention"].head()
+
+_rfm.head()
 
 
 new_df = pd.DataFrame() # yeni dataframe oluşturma...
@@ -145,7 +154,7 @@ new_df = pd.DataFrame() # yeni dataframe oluşturma...
 # Columns: []
 # Index: []
 
-new_df["new_customer_id"] = rfm[rfm["segment"] == "need_attention"].index
+new_df["new_customer_id"] = _rfm[_rfm["segment"] == "need_attention"].index
 new_df.head()
 
 new_df.to_csv("H3/need_attention.csv")  # df'i kaydet

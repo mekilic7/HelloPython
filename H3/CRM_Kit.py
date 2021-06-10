@@ -41,8 +41,6 @@ def create_rfm(dataframe):
     rfm = rfm[["recency", "frequency", "monetary", "segment"]]
     return rfm
 
-
-
 def create_cltv_c(dataframe, profit=0.10):
 
     # Veriyi hazırlama
