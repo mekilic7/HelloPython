@@ -128,7 +128,9 @@ cltv_df = df.groupby('Customer ID').agg({'InvoiceDate': [lambda date: (date.max(
                                          'Invoice': lambda num: num.nunique(),
                                          'TotalPrice': lambda TotalPrice: TotalPrice.sum()})
 
-cltv_df.columns = cltv_df.columns.droplevel(0)
+cltv_df.head()
+
+cltv_df.columns = cltv_df.columns.droplevel(0) #
 cltv_df.columns = ['recency', 'T', 'frequency', 'monetary']
 
 # monetary değerinin satın alma başına ortalama kazanç olarak ifade edilmesi

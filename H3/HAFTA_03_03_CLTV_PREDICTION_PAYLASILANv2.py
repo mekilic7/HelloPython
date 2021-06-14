@@ -19,6 +19,9 @@
 # Gerekli Kütüphane ve Fonksiyonlar
 ##########################
 
+
+#pip install mysql-connector-python
+#pip install mysql-connector
 # pip install lifetimes
 # pip install sqlalchemy
 from sqlalchemy import create_engine
@@ -55,14 +58,20 @@ def replace_with_thresholds(dataframe, variable):
 #########################
 
 
-df_ = pd.read_excel("datasets/online_retail_II.xlsx",
-                    sheet_name="Year 2010-2011")
+df_ = pd.read_excel("H3/online_retail_II.xlsx",sheet_name="Year 2010-2011")
 df = df_.copy()
 df.shape
 
 #########################
 # Verinin Veri Tabanından Okunması
 #########################
+
+creds = {'user': 'synan_dsmlbc_group_2_admin',
+         'passwd': 'iamthedatascientist*****!',
+         'host': 'db.github.rocks',
+         'port': 3306,
+         'db': 'synan_dsmlbc_group_2'}
+
 
 # credentials.
 creds = {'user': 'synan_dsmlbc',
@@ -75,7 +84,8 @@ creds = {'user': 'synan_dsmlbc',
 connstr = 'mysql+mysqlconnector://{user}:{passwd}@{host}:{port}/{db}'
 conn = create_engine(connstr.format(**creds))
 
-# conn.close()
+
+#conn.close()
 
 pd.read_sql_query("show databases;", conn)
 pd.read_sql_query("show tables", conn)
@@ -93,13 +103,13 @@ df = retail_mysql_df.copy()
 # Veri Ön İşleme
 #########################
 
-df.describe().T
-df.dropna(inplace=True)
-df = df[~df["Invoice"].str.contains("C", na=False)]
-df = df[df["Quantity"] > 0]
+df.describe().T  # price ve Quantity de eksi değerler var .. Birşeyler yanlış düzenleme yapılmalı
+df.dropna(inplace=True) # Nul değerleri düş
+df = df[~df["Invoice"].str.contains("C", na=False)] # iadeleri düş
+df = df[df["Quantity"] > 0] # niye böyle oldu ki :) Düş
 
-replace_with_thresholds(df, "Quantity")
-replace_with_thresholds(df, "Price")
+replace_with_thresholds(df, "Quantity") # outlier düzenlemesi
+replace_with_thresholds(df, "Price") # outlier düzenlemesi
 df.describe().T
 
 df["TotalPrice"] = df["Quantity"] * df["Price"]
@@ -120,7 +130,10 @@ cltv_df = df.groupby('Customer ID').agg({'InvoiceDate': [lambda date: (date.max(
                                          'Invoice': lambda num: num.nunique(),
                                          'TotalPrice': lambda TotalPrice: TotalPrice.sum()})
 
-cltv_df.columns = cltv_df.columns.droplevel(0)
+
+cltv_df.head()
+
+cltv_df.columns = cltv_df.columns.droplevel(0) # ilk satırı sil..
 cltv_df.columns = ['recency', 'T', 'frequency', 'monetary']
 
 cltv_df["monetary"] = cltv_df["monetary"] / cltv_df["frequency"]
@@ -250,7 +263,7 @@ cltv = ggf.customer_lifetime_value(bgf,
                                    cltv_df['T'],
                                    cltv_df['monetary'],
                                    time=3,  # 3 aylık
-                                   freq="W",  # T'nin frekans bilgisi.
+                                   freq="W",  # T'nin frekans bilgisi. Haftalık
                                    discount_rate=0.01)
 
 cltv.head()
@@ -436,5 +449,6 @@ rfm_final.head()
 rfm_final = rfm_final.reset_index()
 rfm_final["Customer ID"] = rfm_final["Customer ID"].astype(int)
 rfm_final.to_sql(name='rfm_final', con=conn, if_exists='replace', index=False)
+
 
 
