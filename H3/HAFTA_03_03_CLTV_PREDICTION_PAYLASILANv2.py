@@ -33,7 +33,7 @@ from lifetimes import GammaGammaFitter
 from lifetimes.plotting import plot_period_transactions
 
 pd.set_option('display.max_columns', None)
-pd.set_option('display.width', 500)
+pd.set_option('display.width', None)
 pd.set_option('display.float_format', lambda x: '%.4f' % x)
 from sklearn.preprocessing import MinMaxScaler
 
@@ -89,7 +89,7 @@ conn = create_engine(connstr.format(**creds))
 
 pd.read_sql_query("show databases;", conn)
 pd.read_sql_query("show tables", conn)
-pd.read_sql_query("select * from online_retail_2010_2011 limit 10", conn)
+pd.read_sql_query("select * from ozlem_cagirici limit 10", conn)
 retail_mysql_df = pd.read_sql_query("select * from online_retail_2010_2011", conn)
 
 type(retail_mysql_df)
@@ -452,3 +452,4 @@ rfm_final.to_sql(name='rfm_final', con=conn, if_exists='replace', index=False)
 
 
 
+cltv_final.head()
